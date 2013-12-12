@@ -1,0 +1,26 @@
+#!/bin/sh
+MAKE="10"
+
+## Set compiler location
+echo Setting compiler location...
+export ARCH=arm
+export CROSS_COMPILE=/home/gaxus/ダウンロード/toolchain2/bin/arm-linux-androideabi-
+
+## Build Sultan kernel
+make -j$MAKE ARCH=arm
+
+# *.ko replace
+echo ""
+echo "=====> INSTALL KERNEL MODULES"
+find -name '*.ko' -exec cp -av {} ../ramdisk/lib/modules/ \;
+
+## Compress ramdisk
+./scripts/mkbootfs ../ramdisk/ | gzip > ramdisk.gz
+
+## Merge dt.img and initrd.img with zImage to create final boot.img
+./scripts/mkbootimg --kernel arch/arm/boot/zImage-dtb --cmdline 'console=ttyHSL0,115200,n8 androidboot.hardware=hammerhead user_debug=31 msm_watchdog_v2.enable=1' --base 0x00000000 --pagesize 2048 --ramdisk_offset 0x02900000 --tags_offset 0x02700000 --ramdisk ramdisk.gz --output sultan.img
+
+##boot.img Copy
+echo ""
+echo "=====> Copy sultan.img"
+cp sultan.img ../../gaxusshare
