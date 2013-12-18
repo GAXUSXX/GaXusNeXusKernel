@@ -4,7 +4,7 @@ MAKE="10"
 ## Set compiler location
 echo Setting compiler location...
 export ARCH=arm
-export CROSS_COMPILE=/home/gaxus/ダウンロード/toolchain2/bin/arm-linux-androideabi-
+export CROSS_COMPILE=/home/gaxus/nexus5/toolchain2/bin/arm-linux-androideabi-
 
 ## Build Sultan kernel
 make -j$MAKE ARCH=arm
